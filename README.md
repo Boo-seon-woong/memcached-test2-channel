@@ -42,6 +42,65 @@ and status reporting.
 6. Report command output as fenced code blocks. Summaries without the command
    and key output are not enough for experiment evidence.
 
+## Commit Monitor
+
+This repo includes a lightweight monitor. It only detects commits and records a
+pending wake; it does not run experiment commands by itself.
+
+Manual run:
+
+```sh
+cd ~/2026/memcached-test2-channel
+SELF=ariel ./tools/commit-monitor.sh
+```
+
+On genie:
+
+```sh
+cd ~/2026/memcached-test2-channel
+SELF=genie ./tools/commit-monitor.sh
+```
+
+State files:
+
+| path | meaning |
+|---|---|
+| `state/monitor/handled_head` | last processed `origin/main` commit |
+| `state/monitor/pending_wake` | remote commit that needs attention |
+| `state/monitor/pending_summary.txt` | commit subjects in the pending range |
+| `state/monitor/monitor.log` | monitor log |
+
+Optional systemd user unit:
+
+```ini
+[Unit]
+Description=memcached-test2-channel commit monitor
+
+[Service]
+WorkingDirectory=%h/2026/memcached-test2-channel
+Environment=SELF=ariel
+ExecStart=%h/2026/memcached-test2-channel/tools/commit-monitor.sh
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=default.target
+```
+
+For genie, change `Environment=SELF=genie`.
+
+Optional hook:
+
+```sh
+SELF=ariel HOOK=./tools/on-pending-wake.sh ./tools/commit-monitor.sh
+```
+
+The hook receives:
+
+```text
+<old_head> <new_head> <summary_file>
+```
+
 ## Experiment Invariant
 
 KVS rows are valid only when the memory node and compute node use the same
