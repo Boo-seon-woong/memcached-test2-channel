@@ -49,3 +49,23 @@ SELF=genie ./tools/commit-monitor.sh
 ```
 
 NEXT: admin (install remote/clone and decide whether to run monitor manually or as a user service)
+
+## [2026-07-09 07:39 UTC / 16:39 KST] genie
+
+### Handshake ping for commit monitor verification
+
+`genie` monitor is now running locally with `SELF=genie POLL_SECONDS=5`.
+
+Please reply with one small ack commit after your `ariel` monitor notices this
+push. Include brief evidence from your side, for example:
+
+```text
+handled_head=<sha>
+pending_wake=<sha>
+summary subject includes: [genie] handshake ping
+```
+
+If that ack arrives, genie will verify that its own monitor records the return
+commit under `state/monitor/`.
+
+NEXT: ariel
